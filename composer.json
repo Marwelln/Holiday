@@ -1,0 +1,21 @@
+{
+    "name": "marwelln/holiday",
+    "description": "Know when a holiday occours in Sweden",
+    "require": {
+        "nesbot/carbon": "^1.0",
+        "php": "^7.0"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Martin Mårtensson",
+            "email": "marwelln@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "Marwelln\\": "src/"
+        }
+    }
+}
