@@ -45,7 +45,7 @@ class Holiday {
      *
      * @return array
      */
-    public function get(int $year = null) {
+    public function get($year = null) {
         $this->year($year);
 
         $this->run([
@@ -78,7 +78,7 @@ class Holiday {
      *
      * @return Carbon
      */
-    public function when(string $holiday) {
+    public function when($holiday) {
         if ( ! method_exists($this, "holiday" . $holiday))
             throw new \Exception("Could not find holiday \"$holiday\". Valid holidays are: " . implode(', ', array_keys($this->holidays)) . ".");
 
@@ -92,8 +92,8 @@ class Holiday {
      *
      * @return this
      */
-    public function year(int $year) {
-        $this->year = $year ?? $this->year ?? date('Y');
+    public function year($year) {
+        $this->year = $year ? $year : ($this->year ? $this->year : date('Y'));
 
         return $this;
     }
