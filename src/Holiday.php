@@ -3,15 +3,19 @@
 namespace Marwelln;
 
 use Carbon\Carbon;
+use DateTime;
 
 /**
  * Get swedish holidays.
  *
  * Get all holidays:
- *     var_dump((new Holiday)->get($year = null));
+ *    var_dump((new Holiday)->get($year = null));
  *
  * Check when specific holiday occours:
- *     echo (new Holiday)->when('midsummerday');
+ *    echo (new Holiday)->when('midsummerday');
+ *
+ * Get holidays between two dates:
+ *    var_dump((new Holiday)->between(new DateTime('2015-12-01'), new DateTime('2015-12-31')));
  *
  * Check the holidays property to see which holidays are available.
  */
@@ -83,6 +87,28 @@ class Holiday {
             throw new \Exception("Could not find holiday \"$holiday\". Valid holidays are: " . implode(', ', array_keys($this->holidays)) . ".");
 
         return $this->{"holiday" . $holiday}();
+    }
+
+    /**
+     * Get all holidays between selected dates.
+     *
+     * @param  DateTime $start
+     * @param  DateTime $end
+     *
+     * @return array
+     */
+    public function between(DateTime $start, DateTime $end) : array {
+        $holidays = [];
+        for ($year = $start->format('Y'); $year <= $end->format('Y'); ++$year) {
+            foreach ((new static)->get($year) as $id => $holiday) {
+                if ($holiday->format('Y-m-d') >= $start->format('Y-m-d') &&
+                    $holiday->format('Y-m-d') <= $end->format('Y-m-d')) {
+                    $holidays[] = ['id' => $id, 'date' => $holiday];
+                }
+            }
+        }
+
+        return $holidays;
     }
 
     /**
