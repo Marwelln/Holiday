@@ -2,20 +2,17 @@
 
 namespace Marwelln;
 
-use Carbon\Carbon;
 use DateTime;
+use DateInterval;
 
 /**
  * Get swedish holidays.
  *
  * Get all holidays:
- *    var_dump((new Holiday)->get($year = null));
+ *     var_dump((new Holiday)->get($year = null));
  *
  * Check when specific holiday occours:
- *    echo (new Holiday)->when('midsummerday');
- *
- * Get holidays between two dates:
- *    var_dump((new Holiday)->between(new DateTime('2015-12-01'), new DateTime('2015-12-31')));
+ *     echo (new Holiday)->when('midsummerday');
  *
  * Check the holidays property to see which holidays are available.
  */
@@ -49,8 +46,8 @@ class Holiday {
      *
      * @return array
      */
-    public function get(int $year = null) {
-        $this->year($year);
+    public function get($year = null) {
+        $this->year((int) $year);
 
         $this->run([
             'newYearsDay', 'epiphany', 'easter',
@@ -119,7 +116,7 @@ class Holiday {
      * @return this
      */
     public function year(int $year) {
-        $this->year = $year ?? $this->year ?? date('Y');
+        $this->year = $year ? $year : $this->year ?? date('Y');
 
         return $this;
     }
@@ -131,7 +128,7 @@ class Holiday {
      * @return Carbon
      */
     protected function holidayNewYearsDay() {
-        $date = Carbon::create($this->year, 1, 1, 0, 0, 0);
+        $date = DateTime::createFromFormat('Y-m-d H:i:s', $this->year . '-01-01 00:00:00');
         $this->holidays['newyearsday'] = $date;
 
         return $date;
@@ -144,7 +141,7 @@ class Holiday {
      * @return Carbon
      */
     protected function holidayEpiphany() {
-        $date = Carbon::create($this->year, 1, 6, 0, 0, 0);
+        $date = DateTime::createFromFormat('Y-m-d H:i:s', $this->year . '-01-06 00:00:00');
         $this->holidays['epiphany'] = $date;
 
         return $date;
@@ -160,8 +157,8 @@ class Holiday {
         if ($this->holidays['easter'] !== null)
             return $this->holidays['easter'];
 
-        $date = Carbon::create($this->year, 3, 21, 0, 0, 0);
-        $date->addDays(easter_days($date->year));
+        $date = DateTime::createFromFormat('Y-m-d H:i:s', $this->year . '-03-21 00:00:00');
+        $date->add(new DateInterval('P' . easter_days($this->year) . 'D'));
 
         $this->holidays['easter'] = $date;
 
@@ -177,7 +174,10 @@ class Holiday {
     protected function holidayGoodFriday() {
         $this->holidayEaster();
 
-        return $this->holidays['goodfriday'] = (new Carbon($this->holidays['easter']))->subDays(2);
+        $date = (new DateTime($this->holidays['easter']->format('Y-m-d')));
+        $date->sub(new DateInterval('P2D'));
+
+        return $this->holidays['goodfriday'] = $date;
     }
 
     /**
@@ -189,7 +189,10 @@ class Holiday {
     protected function holidayEasterMonday() {
         $this->holidayEaster();
 
-        return $this->holidays['eastermonday'] = (new Carbon($this->holidays['easter']))->addDay();
+        $date = (new DateTime($this->holidays['easter']->format('Y-m-d')));
+        $date->add(new DateInterval('P1D'));
+
+        return $this->holidays['eastermonday'] = $date;
     }
 
     /**
@@ -202,7 +205,10 @@ class Holiday {
         $this->holidayEaster();
 
         // 4 days to next thursday, then 5 weeks of days after that.
-        return $this->holidays['ascensionday'] = (new Carbon($this->holidays['easter']))->addDays(4 + 5 * 7);
+        $date = (new DateTime($this->holidays['easter']->format('Y-m-d')));
+        $date->add(new DateInterval('P' . (4 + 5 * 7) . 'D'));
+
+        return $this->holidays['ascensionday'] = $date;
     }
 
     /**
@@ -214,7 +220,10 @@ class Holiday {
     protected function holidayPentecostDay() {
         $this->holidayEaster();
 
-        return $this->holidays['pentecostday'] = (new Carbon($this->holidays['easter']))->addDays(7 * 7);
+        $date = (new DateTime($this->holidays['easter']->format('Y-m-d')));
+        $date->add(new DateInterval('P' . (7 * 7) . 'D'));
+
+        return $this->holidays['pentecostday'] = $date;
     }
 
     /**
@@ -224,7 +233,7 @@ class Holiday {
      * @return Carbon
      */
     protected function holidayMayDay() {
-        return $this->holidays['mayday'] = Carbon::create($this->year, 5, 1, 0, 0, 0);
+        return $this->holidays['mayday'] = DateTime::createFromFormat('Y-m-d H:i:s', $this->year . '-05-01 00:00:00');
     }
 
     /**
@@ -234,7 +243,7 @@ class Holiday {
      * @return Carbon
      */
     protected function holidaySwedishNationalDay() {
-        return $this->holidays['swedishnationalday'] = Carbon::create($this->year, 6, 6, 0, 0, 0);
+        return $this->holidays['swedishnationalday'] = DateTime::createFromFormat('Y-m-d H:i:s', $this->year . '-06-06 00:00:00');
     }
 
     /**
@@ -244,12 +253,12 @@ class Holiday {
      * @return Carbon
      */
     protected function holidayMidsummerDay() {
-        $date = Carbon::create($this->year, 6, 20, 0, 0, 0);
+        $date = DateTime::createFromFormat('Y-m-d H:i:s', $this->year . '-06-20 00:00:00');
 
         for ($i = 0; $i <= 6; ++$i) {
-            if ($i) $date->addDay();
+            if ($i) $date->add(new DateInterval('P1D'));
 
-            if ($date->dayOfWeek == 6)
+            if ($date->format('w') == 6)
                 return $this->holidays['midsummerday'] = $date;
         }
 
@@ -263,12 +272,12 @@ class Holiday {
      * @return Carbon
      */
     protected function holidayAllSaintsDay() {
-        $date = Carbon::create($this->year, 10, 31, 0, 0, 0);
+        $date = DateTime::createFromFormat('Y-m-d H:i:s', $this->year . '-10-31 00:00:00');
 
         for ($i = 0; $i <= 6; ++$i) {
-            if ($i) $date->addDay();
+            if ($i) $date->add(new DateInterval('P1D'));
 
-            if ($date->dayOfWeek == 6)
+            if ($date->format('w') == 6)
                 return $this->holidays['allsaintsday'] = $date;
         }
 
@@ -282,7 +291,7 @@ class Holiday {
      * @return Carbon
      */
     protected function holidayChristmasDay() {
-        return $this->holidays['christmasday'] = Carbon::create($this->year, 12, 25, 0, 0, 0);
+        return $this->holidays['christmasday'] = DateTime::createFromFormat('Y-m-d H:i:s', $this->year . '-12-25 00:00:00');
     }
 
     /**
@@ -292,6 +301,6 @@ class Holiday {
      * @return Carbon
      */
     protected function holidayBoxingDay() {
-        return $this->holidays['boxingday'] = Carbon::create($this->year, 12, 26, 0, 0, 0);
+        return $this->holidays['boxingday'] = DateTime::createFromFormat('Y-m-d H:i:s', $this->year . '-12-26 00:00:00');
     }
 }

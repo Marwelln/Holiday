@@ -2,7 +2,6 @@
     "name": "marwelln/holiday",
     "description": "Know when a holiday occours in Sweden",
     "require": {
-        "nesbot/carbon": "^1.0",
         "php": "^7.0"
     },
     "license": "MIT",
