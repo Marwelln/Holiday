@@ -14,7 +14,7 @@ For **PHP 5.4** and later:
 
 # About
 
-This class helps you know when holidays occours in Sweden. You can either get all holidays in an `array` or check when a specific holiday occours. All results returns a [`Carbon`](http://carbon.nesbot.com/) (`DateTime`) object that you can use to format the date the way you want it.
+This class helps you know when holidays occours in Sweden. You can either get all holidays in an `array` or check when a specific holiday occours. All results returns a [`DateTime`](http://php.net/manual/en/class.datetime.php) object that you can use to format the date the way you want it.
 
 # Usage
 
