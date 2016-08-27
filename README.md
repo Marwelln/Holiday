@@ -19,12 +19,15 @@ This class helps you know when holidays occours in Sweden. You can either get al
 # Usage
 
     // Get all holidays as an array.
-    $holidays = (new Marwelln\Holiday)->get($year); // `$year` can be removed if you want to use current year.
-    $holidays = (new Marwelln\Holiday)->year($year)->get();
+    $holidays = (new \Marwelln\Holiday)->get($year); // `$year` can be removed if you want to use current year.
+    $holidays = (new \Marwelln\Holiday)->year($year)->get();
 
     // Check when easter occours.
-    $easter = (new Marwelln\Holiday)->when('easter'); // 27 mars, as of 2016 (current year)
-    $easter = (new Marwelln\Holiday)->year(2015)->when('easter'); // 5 april
+    $easter = (new \Marwelln\Holiday)->when('easter'); // 27 mars, as of 2016 (current year)
+    $easter = (new \Marwelln\Holiday)->year(2015)->when('easter'); // 5 april
+
+    // Get holidays between two dates.
+    $holidays = (new \Marwelln\Holiday)->between(new \DateTime('2015-01-01'), new \DateTime('2015-03-24')); // array of holidays
 
 # Available holidays
 
