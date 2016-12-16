@@ -5,6 +5,8 @@ namespace Marwelln;
 use DateTime;
 use DateInterval;
 
+use Marwelln\Holiday\Collection;
+
 /**
  * Get swedish holidays.
  *
@@ -46,7 +48,7 @@ class Holiday {
      *
      * @return array
      */
-    public function get($year = null) {
+    public function get($year = null) : Collection {
         $this->year((int) $year);
 
         $this->run([
@@ -57,29 +59,28 @@ class Holiday {
             'boxingday'
         ]);
 
-        return $this->holidays;
+        return new Collection($this->holidays);
     }
 
     /**
      * Get dates for selected holidays.
      *
      * @param  array  $holidays
-     * @return [type]
      */
-    public function run(array $holidays) {
+    public function run(array $holidays)  : Holiday {
         foreach ($holidays as $holiday) {
             $this->{"holiday" . $holiday}();
         }
+
+        return $this;
     }
 
     /**
      * Get when does the selected holiday occour.
      *
      * @param  string $holiday
-     *
-     * @return Carbon
      */
-    public function when(string $holiday) {
+    public function when(string $holiday) : DateTime {
         if ( ! method_exists($this, "holiday" . $holiday))
             throw new \Exception("Could not find holiday \"$holiday\". Valid holidays are: " . implode(', ', array_keys($this->holidays)) . ".");
 
@@ -91,10 +92,8 @@ class Holiday {
      *
      * @param  DateTime $start
      * @param  DateTime $end
-     *
-     * @return array
      */
-    public function between(DateTime $start, DateTime $end) : array {
+    public function between(DateTime $start, DateTime $end) : Collection {
         $holidays = [];
         for ($year = $start->format('Y'); $year <= $end->format('Y'); ++$year) {
             foreach ((new static)->get($year) as $id => $holiday) {
@@ -105,17 +104,15 @@ class Holiday {
             }
         }
 
-        return $holidays;
+        return new Collection($holidays);
     }
 
     /**
      * Set the current year to work with.
      *
      * @param  int    $year
-     *
-     * @return this
      */
-    public function year(int $year) {
+    public function year(int $year) : Holiday {
         $this->year = $year ? $year : $this->year ?? date('Y');
 
         return $this;
@@ -124,10 +121,8 @@ class Holiday {
     /**
      * When's New Year's Day (Nyårsdagen)?
      *     1st january
-     *
-     * @return Carbon
      */
-    protected function holidayNewYearsDay() {
+    protected function holidayNewYearsDay() : DateTime {
         $date = DateTime::createFromFormat('Y-m-d H:i:s', $this->year . '-01-01 00:00:00');
         $this->holidays['newyearsday'] = $date;
 
@@ -137,10 +132,8 @@ class Holiday {
     /**
      * When's Ephinany (Trettondedag jul)?
      *     6st january
-     *
-     * @return Carbon
      */
-    protected function holidayEpiphany() {
+    protected function holidayEpiphany() : DateTime {
         $date = DateTime::createFromFormat('Y-m-d H:i:s', $this->year . '-01-06 00:00:00');
         $this->holidays['epiphany'] = $date;
 
@@ -150,10 +143,8 @@ class Holiday {
     /**
      * When's Easter (Påskdagen)?
      *     Closest sunday after the fullmoon that occours closest on or after 21 mars (in Sweden).
-     *
-     * @return Carbon
      */
-    protected function holidayEaster() {
+    protected function holidayEaster() : DateTime {
         if ($this->holidays['easter'] !== null)
             return $this->holidays['easter'];
 
@@ -168,10 +159,8 @@ class Holiday {
     /**
      * When's Good Friday (Långfredagen)?
      *     Closest friday before easter.
-     *
-     * @return Carbon
      */
-    protected function holidayGoodFriday() {
+    protected function holidayGoodFriday() : DateTime {
         $this->holidayEaster();
 
         $date = (new DateTime($this->holidays['easter']->format('Y-m-d')));
@@ -183,10 +172,8 @@ class Holiday {
     /**
      * When's Easter Monday (Annandag påsk)?
      *     Day after easter.
-     *
-     * @return Carbon
      */
-    protected function holidayEasterMonday() {
+    protected function holidayEasterMonday() : DateTime {
         $this->holidayEaster();
 
         $date = (new DateTime($this->holidays['easter']->format('Y-m-d')));
@@ -198,10 +185,8 @@ class Holiday {
     /**
      * When's Feast of Ascension (Kristi himmelfärdsdag)?
      *     Sixth thursday after easter.
-     *
-     * @return Carbon
      */
-    protected function holidayAscensionDay() {
+    protected function holidayAscensionDay() : DateTime {
         $this->holidayEaster();
 
         // 4 days to next thursday, then 5 weeks of days after that.
@@ -214,10 +199,8 @@ class Holiday {
     /**
      * When's Pentecost Day (Pingstdagen)?
      *     Seventh sunday after Easter.
-     *
-     * @return Carbon
      */
-    protected function holidayPentecostDay() {
+    protected function holidayPentecostDay() : DateTime {
         $this->holidayEaster();
 
         $date = (new DateTime($this->holidays['easter']->format('Y-m-d')));
@@ -229,30 +212,24 @@ class Holiday {
     /**
      * When's May Day (Första maj)?
      *     1 maj.
-     *
-     * @return Carbon
      */
-    protected function holidayMayDay() {
+    protected function holidayMayDay()  : DateTime {
         return $this->holidays['mayday'] = DateTime::createFromFormat('Y-m-d H:i:s', $this->year . '-05-01 00:00:00');
     }
 
     /**
      * When's Swedish national day (Svenska nationaldagen)?
      *     6 june.
-     *
-     * @return Carbon
      */
-    protected function holidaySwedishNationalDay() {
+    protected function holidaySwedishNationalDay() : DateTime {
         return $this->holidays['swedishnationalday'] = DateTime::createFromFormat('Y-m-d H:i:s', $this->year . '-06-06 00:00:00');
     }
 
     /**
      * When's Midsummer day (Midsommar)?
      *     The saturday that occours between 20th and the 26th of june.
-     *
-     * @return Carbon
      */
-    protected function holidayMidsummerDay() {
+    protected function holidayMidsummerDay() : DateTime {
         $date = DateTime::createFromFormat('Y-m-d H:i:s', $this->year . '-06-20 00:00:00');
 
         for ($i = 0; $i <= 6; ++$i) {
@@ -268,10 +245,8 @@ class Holiday {
     /**
      * When's All Saint's Day (Alla helgons dag)?
      *     The saturday that occours between 31st october to 6th november.
-     *
-     * @return Carbon
      */
-    protected function holidayAllSaintsDay() {
+    protected function holidayAllSaintsDay() : DateTime {
         $date = DateTime::createFromFormat('Y-m-d H:i:s', $this->year . '-10-31 00:00:00');
 
         for ($i = 0; $i <= 6; ++$i) {
@@ -287,20 +262,16 @@ class Holiday {
     /**
      * When's Christmas Day (Juldagen)?
      *     25 december.
-     *
-     * @return Carbon
      */
-    protected function holidayChristmasDay() {
+    protected function holidayChristmasDay() : DateTime {
         return $this->holidays['christmasday'] = DateTime::createFromFormat('Y-m-d H:i:s', $this->year . '-12-25 00:00:00');
     }
 
     /**
      * When's Boxing Day (Annandag jul)?
      *     26 december.
-     *
-     * @return Carbon
      */
-    protected function holidayBoxingDay() {
+    protected function holidayBoxingDay() : DateTime {
         return $this->holidays['boxingday'] = DateTime::createFromFormat('Y-m-d H:i:s', $this->year . '-12-26 00:00:00');
     }
 }
