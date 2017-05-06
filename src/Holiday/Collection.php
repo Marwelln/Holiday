@@ -3,7 +3,7 @@ namespace Marwelln\Holiday;
 
 use DateTime;
 
-class Collection implements \IteratorAggregate, \ArrayAccess, \Countable {
+class Collection implements \IteratorAggregate, \ArrayAccess, \Countable, \JsonSerializable {
     protected $holidays = [];
 
     public function __construct(array $holidays) {
@@ -55,6 +55,17 @@ class Collection implements \IteratorAggregate, \ArrayAccess, \Countable {
         return $this->holidays;
     }
 
+    /**
+     * Make sure we can run json_encode on the class.
+     */
+    public function jsonSerialize() : array {
+        return $this->toArray();
+    }
+
+    /**
+     * Count have many holidays we have fetched.
+     * @return [type]
+     */
     public function count() {
         return count($this->holidays);
     }
