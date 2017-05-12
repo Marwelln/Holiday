@@ -84,6 +84,8 @@ class Holiday {
         if ( ! method_exists($this, "holiday" . $holiday))
             throw new \Exception("Could not find holiday \"$holiday\". Valid holidays are: " . implode(', ', array_keys($this->holidays)) . ".");
 
+        $this->year(null);
+
         return $this->{"holiday" . $holiday}();
     }
 
@@ -112,7 +114,7 @@ class Holiday {
      *
      * @param  int    $year
      */
-    public function year(int $year) : Holiday {
+    public function year(?int $year) : Holiday {
         $this->year = $year ? $year : $this->year ?? date('Y');
 
         return $this;
@@ -213,7 +215,7 @@ class Holiday {
      * When's May Day (Första maj)?
      *     1 maj.
      */
-    protected function holidayMayDay()  : DateTime {
+    protected function holidayMayDay() : DateTime {
         return $this->holidays['mayday'] = DateTime::createFromFormat('Y-m-d H:i:s', $this->year . '-05-01 00:00:00');
     }
 
