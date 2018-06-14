@@ -37,6 +37,7 @@ class Holiday {
         'pentecostday' => null,
         'mayday' => null,
         'swedishnationalday' => null,
+        'midsummereve' => null,
         'midsummerday' => null,
         'allsaintsday' => null,
         'christmasday' => null,
@@ -55,7 +56,7 @@ class Holiday {
             'newYearsDay', 'epiphany', 'easter',
             'goodfriday', 'eastermonday', 'ascensionday',
             'pentecostday', 'mayday', 'swedishnationalday',
-            'midsummerday', 'allsaintsday', 'christmasday',
+            'midsummereve', 'midsummerday', 'allsaintsday', 'christmasday',
             'boxingday'
         ]);
 
@@ -242,6 +243,18 @@ class Holiday {
         }
 
         throw new \Exception('Could not find midsummer day.');
+    }
+
+    /**
+     * When's Midsummer eve (Midsommarafton)?
+     *     The friday that occours before midsummer.
+     */
+    protected function holidayMidsummerEve() : DateTime {
+        $this->run(['midsummerday']);
+
+        $date = (clone $this->holidays['midsummerday'])->modify('-1 day');
+
+        return $this->holidays['midsummereve'] = $date;
     }
 
     /**
