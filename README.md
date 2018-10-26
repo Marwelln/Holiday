@@ -1,16 +1,12 @@
 # Requirements
 
-This class requires **PHP 7** unless you use the `php5` branch. The php5 branch does not us our `Collection` class.
+This class requires **PHP 7.1**.
 
 # Installation
 
-For **PHP 7** and later:
+For **PHP 7.1** and later:
 
     composer require marwelln/holiday:~2.0
-
-For **PHP 5.4** and later:
-
-    compsoer require marwelln/holiday:dev-php5
 
 # About
 
@@ -42,6 +38,7 @@ This class helps you know when holidays occours in Sweden. You can either get al
 
 # Available holidays
 
+- newyearseve (nyårsafton)
 - newyearsday (nyårsdagen)
 - epiphany (trettondedag jul)
 - easter (påskdagen)
@@ -54,5 +51,6 @@ This class helps you know when holidays occours in Sweden. You can either get al
 - midsummereve (midsommarafton)
 - midsummerday (midsommardagen)
 - allsaintsday (alla helgons dag)
+- christmaseve (julafton)
 - christmasday (juldagen)
 - boxingday (annandag jul)
