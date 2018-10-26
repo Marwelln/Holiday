@@ -27,6 +27,10 @@ class HolidayTest extends TestCase {
         $this->assertInstanceOf(DateTime::class, $holiday);
         $this->assertEquals("{$year}-01-01", $holiday->format('Y-m-d'));
 
+        $holiday = (new Holiday)->year(2015)->when('newyearseve');
+        $this->assertInstanceOf(DateTime::class, $holiday);
+        $this->assertEquals('2015-12-31', $holiday->format('Y-m-d'));
+
         $holiday = (new Holiday)->year(2016)->when('newyearsday');
         $this->assertInstanceOf(DateTime::class, $holiday);
         $this->assertEquals('2016-01-01', $holiday->format('Y-m-d'));
@@ -114,6 +118,10 @@ class HolidayTest extends TestCase {
         $holiday = (new Holiday)->when('christmasday');
         $this->assertInstanceOf(DateTime::class, $holiday);
         $this->assertEquals("{$year}-12-25", $holiday->format('Y-m-d'));
+
+        $holiday = (new Holiday)->year(2016)->when('christmaseve');
+        $this->assertInstanceOf(DateTime::class, $holiday);
+        $this->assertEquals('2016-12-24', $holiday->format('Y-m-d'));
 
         $holiday = (new Holiday)->year(2016)->when('christmasday');
         $this->assertInstanceOf(DateTime::class, $holiday);

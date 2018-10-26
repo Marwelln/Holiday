@@ -1,10 +1,6 @@
-<?php
+<?php namespace Marwelln;
 
-namespace Marwelln;
-
-use DateTime;
-use DateInterval;
-
+use DateTime, DateInterval;
 use Marwelln\Holiday\Collection;
 
 /**
@@ -29,6 +25,7 @@ class Holiday {
      */
     protected $holidays = [
         'newyearsday' => null,
+        'newyearseve' => null,
         'epiphany' => null,
         'easter' => null,
         'goodfriday' => null,
@@ -40,35 +37,26 @@ class Holiday {
         'midsummereve' => null,
         'midsummerday' => null,
         'allsaintsday' => null,
+        'christmaseve' => null,
         'christmasday' => null,
         'boxingday' => null
     ];
 
     /**
      * Get all holidays for the current year.
-     *
-     * @return array
      */
-    public function get($year = null) : Collection {
-        $this->year((int) $year);
+    public function get(?int $year = null) : Collection {
+        $this->year($year);
 
-        $this->run([
-            'newYearsDay', 'epiphany', 'easter',
-            'goodfriday', 'eastermonday', 'ascensionday',
-            'pentecostday', 'mayday', 'swedishnationalday',
-            'midsummereve', 'midsummerday', 'allsaintsday', 'christmasday',
-            'boxingday'
-        ]);
+        $this->run(array_keys($this->holidays));
 
         return new Collection($this->holidays);
     }
 
     /**
      * Get dates for selected holidays.
-     *
-     * @param  array  $holidays
      */
-    public function run(array $holidays)  : Holiday {
+    public function run(array $holidays) : self {
         foreach ($holidays as $holiday) {
             $this->{"holiday" . $holiday}();
         }
@@ -78,8 +66,6 @@ class Holiday {
 
     /**
      * Get when does the selected holiday occour.
-     *
-     * @param  string $holiday
      */
     public function when(string $holiday) : DateTime {
         if ( ! method_exists($this, "holiday" . $holiday))
@@ -92,9 +78,6 @@ class Holiday {
 
     /**
      * Get all holidays between selected dates.
-     *
-     * @param  DateTime $start
-     * @param  DateTime $end
      */
     public function between(DateTime $start, DateTime $end) : Collection {
         $holidays = [];
@@ -112,13 +95,22 @@ class Holiday {
 
     /**
      * Set the current year to work with.
-     *
-     * @param  int    $year
      */
     public function year(?int $year) : Holiday {
         $this->year = $year ? $year : $this->year ?? date('Y');
 
         return $this;
+    }
+
+    /**
+     * When's New Year's Eve (Nyårsafton)?
+     *     31st december
+     */
+    protected function holidayNewYearsEve() : DateTime {
+        $date = DateTime::createFromFormat('Y-m-d H:i:s', $this->year . '-12-31 00:00:00');
+        $this->holidays['newyearseve'] = $date;
+
+        return $date;
     }
 
     /**
@@ -272,6 +264,14 @@ class Holiday {
         }
 
         throw new \Exception('Could not find All Saints\' day.');
+    }
+
+    /**
+     * When's Christmas Eve (Julafton)?
+     *     24 december.
+     */
+    protected function holidayChristmasEve() : DateTime {
+        return $this->holidays['christmaseve'] = DateTime::createFromFormat('Y-m-d H:i:s', $this->year . '-12-24 00:00:00');
     }
 
     /**

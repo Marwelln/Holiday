@@ -1,5 +1,4 @@
-<?php
-namespace Marwelln\Holiday;
+<?php namespace Marwelln\Holiday;
 
 use DateTime;
 
@@ -16,8 +15,6 @@ class Collection implements \IteratorAggregate, \ArrayAccess, \Countable, \JsonS
 
     /**
      * Check if selected date is a holiday.
-     *
-     * @param  DateTime $date
      */
     public function isHoliday(DateTime $date) : bool {
         foreach ($this->holidays as $holiday) {
@@ -64,9 +61,8 @@ class Collection implements \IteratorAggregate, \ArrayAccess, \Countable, \JsonS
 
     /**
      * Count have many holidays we have fetched.
-     * @return [type]
      */
-    public function count() {
+    public function count() : int {
         return count($this->holidays);
     }
 
